@@ -1,4 +1,3 @@
---Script to generate the decay heat database
 create database if not exists decay_heat_verification;
 use decay_heat_verification;
 create table if not exists assembly_type (
