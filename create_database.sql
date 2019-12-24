@@ -19,6 +19,6 @@ LOAD DATA LOCAL INFILE '/home/noemi/python/decay_heat/decay_heat/epri_measure.cs
     ENCLOSED BY '"' 
     LINES TERMINATED BY '\n' 
     IGNORE 1 LINES
-    (@dummy,@dummy,@dummy,assembly_name,@dummy,@dummy,@dummy,@dummy,@dummy,@dummy,@dummy,@dummy,@dummy) 
+    (@facility,@reactor,@assembly_type,assembly_name,initial_enrichment,@u_weight,burnup,@dc_date,@m_date,@cooling_time,@dummy,@dummy,@dummy) 
     ;
 SELECT * FROM assembly;
