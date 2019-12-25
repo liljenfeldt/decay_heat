@@ -1,6 +1,19 @@
 drop database if exists decay_heat_verification;
 create database if not exists decay_heat_verification;
 use decay_heat_verification;
+create table if not exists reactor_type (
+    id int auto_increment not null primary key,
+    reactor_type varchar(55) not null,
+    UNIQUE(reactor_type)
+);
+create table if not exists reactor (
+    id int auto_increment not null primary key,
+    reactor_name varchar(55),
+    country varchar(55),
+    reactor_type_id int,
+    UNIQUE(reactor_name),
+    FOREIGN KEY (reactor_type_id) REFERENCES reactor_type(id)
+);
 create table if not exists assembly_type (
     id int auto_increment not null primary key,
     assembly_type_name varchar(55),
