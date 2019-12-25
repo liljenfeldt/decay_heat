@@ -44,5 +44,5 @@ INSERT IGNORE INTO assembly_type (assembly_type_name) SELECT DISTINCT(ti.assembl
 INSERT IGNORE INTO assembly (assembly_name,initial_enrichment,burnup,assembly_type_id)
 SELECT ti.assembly_name, ti.initial_enrichment, ti.burnup, at.id FROM temp_import ti
 join assembly_type at on at.assembly_type_name = ti.assembly_type;
-
+DROP TABLE temp_import;
 SELECT * FROM assembly;
