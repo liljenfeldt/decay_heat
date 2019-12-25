@@ -54,6 +54,7 @@ LOAD DATA LOCAL INFILE '/home/noemi/python/decay_heat/decay_heat/epri_measure.cs
     set dc_date = STR_TO_DATE(@dc_date,'%m/%d/%Y'),
          m_date = STR_TO_DATE(@m_date,'%m/%d/%Y')
     ;
+INSERT IGNORE INTO reactor_type (reactor_type) SELECT DISTINCT(ti.reactor_type) FROM temp_import ti;
 INSERT IGNORE INTO assembly_type (assembly_type_name) SELECT DISTINCT(ti.assembly_type) FROM temp_import ti;
 INSERT IGNORE INTO assembly (assembly_name,initial_enrichment,burnup,assembly_type_id,discharge_date)
 SELECT ti.assembly_name, ti.initial_enrichment, ti.burnup, at.id, ti.dc_date FROM temp_import ti
