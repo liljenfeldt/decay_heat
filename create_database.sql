@@ -11,6 +11,7 @@ create table if not exists assembly (
     assembly_name varchar(55),
     initial_enrichment float,
     burnup int,
+    discharge_date date,
     assembly_type_id int,
     UNIQUE(assembly_name),
     foreign key (assembly_type_id) references assembly_type(id)
@@ -41,8 +42,8 @@ LOAD DATA LOCAL INFILE '/home/noemi/python/decay_heat/decay_heat/epri_measure.cs
          m_date = STR_TO_DATE(@m_date,'%m/%d/%Y')
     ;
 INSERT IGNORE INTO assembly_type (assembly_type_name) SELECT DISTINCT(ti.assembly_type) FROM temp_import ti;
-INSERT IGNORE INTO assembly (assembly_name,initial_enrichment,burnup,assembly_type_id)
-SELECT ti.assembly_name, ti.initial_enrichment, ti.burnup, at.id FROM temp_import ti
+INSERT IGNORE INTO assembly (assembly_name,initial_enrichment,burnup,assembly_type_id,discharge_date)
+SELECT ti.assembly_name, ti.initial_enrichment, ti.burnup, at.id, ti.dc_date FROM temp_import ti
 join assembly_type at on at.assembly_type_name = ti.assembly_type;
 DROP TABLE temp_import;
 SELECT * FROM assembly;
