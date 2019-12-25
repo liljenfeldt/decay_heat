@@ -3,7 +3,8 @@ create database if not exists decay_heat_verification;
 use decay_heat_verification;
 create table if not exists assembly_type (
     id int auto_increment not null primary key,
-    assembly_type_name varchar(55)
+    assembly_type_name varchar(55),
+    UNIQUE(assembly_type_name)
 );
 create table if not exists assembly (
     id int auto_increment not null primary key,
@@ -11,6 +12,7 @@ create table if not exists assembly (
     initial_enrichment float,
     burnup int,
     assembly_type_id int,
+    UNIQUE(assembly_name),
     foreign key (assembly_type_id) references assembly_type(id)
 );
 create table temp_import (
@@ -38,8 +40,8 @@ LOAD DATA LOCAL INFILE '/home/noemi/python/decay_heat/decay_heat/epri_measure.cs
     set dc_date = STR_TO_DATE(@dc_date,'%m/%d/%Y'),
          m_date = STR_TO_DATE(@m_date,'%m/%d/%Y')
     ;
-INSERT INTO assembly_type (assembly_type_name) SELECT DISTINCT(ti.assembly_type) FROM temp_import ti;
-INSERT INTO assembly (assembly_name,initial_enrichment,burnup,assembly_type_id)
+INSERT IGNORE INTO assembly_type (assembly_type_name) SELECT DISTINCT(ti.assembly_type) FROM temp_import ti;
+INSERT IGNORE INTO assembly (assembly_name,initial_enrichment,burnup,assembly_type_id)
 SELECT ti.assembly_name, ti.initial_enrichment, ti.burnup, at.id FROM temp_import ti
 join assembly_type at on at.assembly_type_name = ti.assembly_type;
 
