@@ -21,8 +21,8 @@ create table temp_import (
     initial_enrichment varchar(55),
     u_weight float,
     burnup int,
-    dc_date varchar(55),
-    m_date varchar(55),
+    dc_date date,
+    m_date date,
     cooling_time float,
     measured_dh float,
     scale5_ornl float,
@@ -34,8 +34,13 @@ LOAD DATA LOCAL INFILE '/home/noemi/python/decay_heat/decay_heat/epri_measure.cs
     ENCLOSED BY '"' 
     LINES TERMINATED BY '\n' 
     IGNORE 1 LINES
-    (facility,reactor,assembly_type,assembly_name,initial_enrichment,u_weight,burnup,dc_date,m_date,cooling_time,measured_dh,scale5_ornl,reactor_type)
+    (facility,reactor,assembly_type,assembly_name,initial_enrichment,u_weight,burnup,@dc_date,@m_date,cooling_time,measured_dh,scale5_ornl,reactor_type)
+    set dc_date = STR_TO_DATE(@dc_date,'%m/%d/%Y'),
+         m_date = STR_TO_DATE(@m_date,'%m/%d/%Y')
     ;
-SELECT * FROM temp_import;
-drop table temp_import;
+INSERT INTO assembly_type (assembly_type_name) SELECT DISTINCT(ti.assembly_type) FROM temp_import ti;
+INSERT INTO assembly (assembly_name,initial_enrichment,burnup,assembly_type_id)
+SELECT ti.assembly_name, ti.initial_enrichment, ti.burnup, at.id FROM temp_import ti
+join assembly_type at on at.assembly_type_name = ti.assembly_type;
+
 SELECT * FROM assembly;
