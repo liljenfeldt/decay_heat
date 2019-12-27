@@ -43,8 +43,8 @@ create table if not exists reactor (
     UNIQUE(reactor_name),
     FOREIGN KEY (reactor_type_id) REFERENCES reactor_type(id)
 );
--- INSERT IGNORE INTO reactor (reactor_name,reactor_type_id) 
---    SELECT DISTINCT(ti.reactor_type) FROM temp_import ti;
+INSERT IGNORE INTO reactor (reactor_name,reactor_type_id)
+SELECT ti.reactor, (SELECT id FROM reactor_type where reactor_type = max(ti.reactor_type)) FROM temp_import ti GROUP BY ti.reactor;
 
 create table if not exists assembly_type (
     id int auto_increment not null primary key,
@@ -68,4 +68,4 @@ INSERT IGNORE INTO assembly (assembly_name,initial_enrichment,burnup,assembly_ty
     join assembly_type at on at.assembly_type_name = ti.assembly_type;
 
 -- DROP TABLE temp_import;
-SELECT * FROM assembly;
+SELECT * FROM reactor;
