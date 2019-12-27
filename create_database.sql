@@ -26,11 +26,15 @@ LOAD DATA LOCAL INFILE '/home/noemi/python/decay_heat/decay_heat/epri_measure.cs
     set dc_date = STR_TO_DATE(@dc_date,'%m/%d/%Y'),
          m_date = STR_TO_DATE(@m_date,'%m/%d/%Y')
     ;
+
 create table if not exists reactor_type (
     id int auto_increment not null primary key,
     reactor_type varchar(55) not null,
     UNIQUE(reactor_type)
 );
+INSERT IGNORE INTO reactor_type (reactor_type) 
+    SELECT DISTINCT(ti.reactor_type) FROM temp_import ti;
+
 create table if not exists reactor (
     id int auto_increment not null primary key,
     reactor_name varchar(55),
@@ -39,11 +43,16 @@ create table if not exists reactor (
     UNIQUE(reactor_name),
     FOREIGN KEY (reactor_type_id) REFERENCES reactor_type(id)
 );
+-- INSERT IGNORE INTO reactor (reactor_name,reactor_type_id) 
+--    SELECT DISTINCT(ti.reactor_type) FROM temp_import ti;
+
 create table if not exists assembly_type (
     id int auto_increment not null primary key,
     assembly_type_name varchar(55),
     UNIQUE(assembly_type_name)
 );
+INSERT IGNORE INTO assembly_type (assembly_type_name) SELECT DISTINCT(ti.assembly_type) FROM temp_import ti;
+
 create table if not exists assembly (
     id int auto_increment not null primary key,
     assembly_name varchar(55),
@@ -54,11 +63,9 @@ create table if not exists assembly (
     UNIQUE(assembly_name),
     foreign key (assembly_type_id) references assembly_type(id)
 );
-INSERT IGNORE INTO reactor_type (reactor_type) SELECT DISTINCT(ti.reactor_type) FROM temp_import ti;
--- INSERT IGNORE INTO reactor (reactor_name,reactor_type_id) SELECT DISTINCT(ti.reactor_type) FROM temp_import ti;
-INSERT IGNORE INTO assembly_type (assembly_type_name) SELECT DISTINCT(ti.assembly_type) FROM temp_import ti;
 INSERT IGNORE INTO assembly (assembly_name,initial_enrichment,burnup,assembly_type_id,discharge_date)
-SELECT ti.assembly_name, ti.initial_enrichment, ti.burnup, at.id, ti.dc_date FROM temp_import ti
-join assembly_type at on at.assembly_type_name = ti.assembly_type;
+    SELECT ti.assembly_name, ti.initial_enrichment, ti.burnup, at.id, ti.dc_date FROM temp_import ti
+    join assembly_type at on at.assembly_type_name = ti.assembly_type;
+
 -- DROP TABLE temp_import;
 SELECT * FROM assembly;
