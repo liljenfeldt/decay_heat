@@ -72,6 +72,15 @@ INSERT IGNORE INTO assembly (assembly_name,initial_enrichment,burnup,assembly_ty
     join assembly_type at on at.assembly_type_name = ti.assembly_type
     join reactor r on r.reactor_name = ti.reactor;
 
+CREATE TABLE IF NOT EXISTS measurement_facility (
+    id int auto_increment not null primary key,
+    measurement_facility_name varchar(55),
+    country varchar(55),
+    UNIQUE(measurement_facility_name)
+);
+INSERT IGNORE INTO measurement_facility (measurement_facility_name)
+    SELECT DISTINCT(facility) FROM temp_import;
+
 CREATE TABLE IF NOT EXISTS measurement (
     id int auto_increment not null primary key,
     assembly_id int,
@@ -82,8 +91,8 @@ CREATE TABLE IF NOT EXISTS measurement (
     measurement_undertainty float,
     UNIQUE(assembly_id,measurement_facility_id),
     FOREIGN KEY (assembly_id) REFERENCES assembly(id)
-    -- FOREIGN KEY (measurement_facility_id) REFERENCE measurement_facility(id)
+    FOREIGN KEY (measurement_facility_id) REFERENCE measurement_facility(id)
 );
 
 -- DROP TABLE temp_import;
-SELECT * FROM assembly;
+SELECT * FROM measurement_facility;
