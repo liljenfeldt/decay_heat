@@ -72,5 +72,18 @@ INSERT IGNORE INTO assembly (assembly_name,initial_enrichment,burnup,assembly_ty
     join assembly_type at on at.assembly_type_name = ti.assembly_type
     join reactor r on r.reactor_name = ti.reactor;
 
+CREATE TABLE IF NOT EXISTS measurement (
+    id int auto_increment not null primary key,
+    assembly_id int,
+    measurement_facility_id int,
+    total_measured_decay_heat float,
+    escape_gamma float,
+    cal_decay_heat float,
+    measurement_undertainty float,
+    UNIQUE(assembly_id,measurement_facility_id),
+    FOREIGN KEY (assembly_id) REFERENCES assembly(id)
+    -- FOREIGN KEY (measurement_facility_id) REFERENCE measurement_facility(id)
+);
+
 -- DROP TABLE temp_import;
 SELECT * FROM assembly;
