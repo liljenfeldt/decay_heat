@@ -62,12 +62,15 @@ create table if not exists assembly (
     burnup int,
     discharge_date date,
     assembly_type_id int,
-    UNIQUE(assembly_name),
-    foreign key (assembly_type_id) references assembly_type(id)
+    reactor_id int,
+    UNIQUE(assembly_name,reactor_id),
+    foreign key (assembly_type_id) references assembly_type(id),
+    foreign key (reactor_id) references reactor(id)
 );
-INSERT IGNORE INTO assembly (assembly_name,initial_enrichment,burnup,assembly_type_id,discharge_date)
-    SELECT ti.assembly_name, ti.initial_enrichment, ti.burnup, at.id, ti.dc_date FROM temp_import ti
-    join assembly_type at on at.assembly_type_name = ti.assembly_type;
+INSERT IGNORE INTO assembly (assembly_name,initial_enrichment,burnup,assembly_type_id,discharge_date,reactor_id)
+    SELECT ti.assembly_name, ti.initial_enrichment, ti.burnup, at.id, ti.dc_date, r.id FROM temp_import ti
+    join assembly_type at on at.assembly_type_name = ti.assembly_type
+    join reactor r on r.reactor_name = ti.reactor;
 
 -- DROP TABLE temp_import;
-SELECT * FROM reactor;
+SELECT * FROM assembly;
