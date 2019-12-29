@@ -96,5 +96,4 @@ INSERT IGNORE INTO measurement (assembly_id,measurement_facility_id,total_measur
     join assembly a on a.assembly_name = ti.assembly_name
     join measurement_facility mf on mf.measurement_facility_name = ti.facility;
 
--- DROP TABLE temp_import;
-SELECT * FROM measurement;
+DROP TABLE temp_import;
