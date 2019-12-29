@@ -86,13 +86,15 @@ CREATE TABLE IF NOT EXISTS measurement (
     assembly_id int,
     measurement_facility_id int,
     total_measured_decay_heat float,
-    escape_gamma float,
-    cal_decay_heat float,
     measurement_undertainty float,
     UNIQUE(assembly_id,measurement_facility_id),
-    FOREIGN KEY (assembly_id) REFERENCES assembly(id)
-    FOREIGN KEY (measurement_facility_id) REFERENCE measurement_facility(id)
+    FOREIGN KEY (assembly_id) REFERENCES assembly(id),
+    FOREIGN KEY (measurement_facility_id) REFERENCES measurement_facility(id)
 );
+INSERT IGNORE INTO measurement (assembly_id,measurement_facility_id,total_measured_decay_heat)
+    SELECT a.id, mf.id, ti.measured_dh from temp_import ti
+    join assembly a on a.assembly_name = ti.assembly_name
+    join measurement_facility mf on mf.measurement_facility_name = ti.facility;
 
 -- DROP TABLE temp_import;
-SELECT * FROM measurement_facility;
+SELECT * FROM measurement;
